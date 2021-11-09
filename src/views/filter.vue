@@ -1,7 +1,20 @@
 <template>
     <section>
         <h2>基础用法</h2>
-        <img class="img" src="../assets/images/1.jpg" alt="滤镜 demo 图" >
+        <div class="basic">
+            <ul class="basic-attr">
+                <li
+                    class="basic-attr-item"
+                    v-for="item in filterAttrs"
+                    :key="item.attr"
+                    :class="{ selected: item.value === currentAttr.value }"
+                    @click="select(item)"
+                >
+                    {{ item.attr }}
+                </li>
+            </ul>
+            <img class="img" :style="filterStyle" src="../assets/images/1.jpg" alt="滤镜 demo 图" >
+        </div>
         <h2>卡片模糊</h2>
         <ul class="cards">
             <li class="card">One</li>
@@ -29,37 +42,81 @@
 </template>
 
 <script>
+import { shallowRef, ref, computed } from 'vue';
+import svg from '../assets/images/filter.svg';
+
 export default {
     setup() {
-        
+        const filterAttrs = shallowRef([
+            /* svg */
+            { attr: "filter: url('../assets/images/filter.svg#svgBlur')", value: `url(${svg}#svgBlur)` },
+            /* 高斯模糊, 不接受百分比数值 */
+            { attr: "filter: blur(5px)", value: "blur(5px)" },
+            /* 亮/明度 0~100%, 100% 无变化, 可超过 100% */
+            { attr: "filter: brightness(0.4)", value: "brightness(0.4)" },
+            /* 对比度 0~100%, 100% 无变化, 可超过 100%, 意味更低对比度 */
+            { attr: "filter: contrast(200%)", value: "contrast(200%)" },
+            /* 阴影效果, 可设置模糊度, 与 box-shadow 类似, 浏览器可能会为滤镜开启硬件加速 */
+            { attr: "filter: drop-shadow(16px 16px 20px blue)", value: "drop-shadow(16px 16px 20px blue)" },
+            /* 图像灰度, 0~100%, 0 无变化 */
+            { attr: "filter: grayscale(50%)", value: "grayscale(50%)" },
+            /* 色相旋转, 角度值, 0 无变化 */
+            { attr: "filter: hue-rotate(90deg)", value: "hue-rotate(90deg)" },
+            /* 图像反转 0~100%, 0 无变化 */
+            { attr: "filter: invert(75%)", value: "invert(75%)" },
+            /* 透明度 0~100%, 100% 无变化 */
+            { attr: "filter: opacity(25%)", value: "opacity(25%)" },
+            /* 图像饱和度 0~100%, 100% 无变化 */
+            { attr: "filter: saturate(30%)", value: "saturate(30%)" },
+            /* 转为深褐色 0~100%, 0 无变化 */
+            { attr: "filter: sepia(60%)", value: "sepia(60%)" },
+        ]);
+
+        const currentAttr = ref(filterAttrs.value[0]);
+
+        const filterStyle = computed(() => {
+            return {
+                filter: currentAttr.value.value,
+            };
+        });
+
+        const select = (item) => {
+            currentAttr.value = item;
+        };
+
+        return {
+            filterAttrs,
+            currentAttr,
+            filterStyle,
+
+            select,
+        };
     },
 }
 </script>
 
 <style>
+.basic {
+    display: flex;
+    justify-content: center;
+}
+.basic ul,
+.basic li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.basic-attr-item {
+    width: 400px;
+    cursor: pointer;
+}
+.basic-attr-item.selected {
+    color: #2254f4;
+}
 /* 基础用法 */
 .img {
-    filter: url('../assets/images/filter.svg#svgBlur');
-    /* 高斯模糊, 不接受百分比数值 */
-    /* filter: blur(5px); */
-    /* 亮/明度 0~100%, 100% 无变化, 可超过 100% */
-    /* filter: brightness(0.4); */
-    /* 对比度 0~100%, 100% 无变化, 可超过 100%, 意味更低对比度 */
-    /* filter: contrast(200%); */
-    /* 阴影效果, 可设置模糊度, 与 box-shadow 类似, 浏览器可能会为滤镜开启硬件加速 */
-    /* filter: drop-shadow(16px 16px 20px blue); */
-    /* 图像灰度, 0~100%, 0 无变化 */
-    /* filter: grayscale(50%); */
-    /* 色相旋转, 角度值, 0 无变化 */
-    /* filter: hue-rotate(90deg); */
-    /* 图像反转 0~100%, 0 无变化 */
-    /* filter: invert(75%); */
-    /* 透明度 0~100%, 100% 无变化 */
-    /* filter: opacity(25%); */
-    /* 图像饱和度 0~100%, 100% 无变化 */
-    /* filter: saturate(30%); */
-    /* 转为深褐色 0~100%, 0 无变化 */
-    /* filter: sepia(60%);  */
+    width: 400px;
+    height: 242px;
 }
 /* 卡片模糊 */
 .cards,
