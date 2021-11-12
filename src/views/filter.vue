@@ -1,43 +1,65 @@
 <template>
-    <section>
-        <h2>基础用法</h2>
-        <div class="basic">
-            <ul class="basic-attr">
-                <li
-                    class="basic-attr-item"
-                    v-for="item in filterAttrs"
-                    :key="item.attr"
-                    :class="{ selected: item.value === currentAttr.value }"
-                    @click="select(item)"
-                >
-                    {{ item.attr }}
-                </li>
-            </ul>
-            <img class="img" :style="filterStyle" src="../assets/images/1.jpg" alt="滤镜 demo 图" >
-        </div>
-        <h2>卡片模糊</h2>
-        <ul class="cards">
-            <li class="card">One</li>
-            <li class="card">Two</li>
-            <li class="card">Three</li>
+    <section class="filter" :class="{ gray: isGray }">
+        <ul class="tabs">
+            <li class="tab" :class="{ selected: currentTab === item.value }" v-for="item in tabs" :key="item.value" @click="changeTab(item)">{{item.name}}</li>
         </ul>
-        <h2>融合效果</h2>
-        <div class="container">
-            <div class="circle circle-1"></div>
-            <div class="circle circle-2"></div>
-        </div>
-        <h2>加载动画</h2>
-        <div class="loading">
-            <div class="item"></div>
-            <div class="item"></div>
-            <div class="item"></div>
-            <div class="item"></div>
-            <div class="item"></div>
-        </div>
-        <h2>酷炫的文字</h2>
-        <div class="text-container">
-            <span class="text">酷炫的文字出场</span>
-        </div>
+        <section v-show="currentTab === 0">
+            <h2>基础用法</h2>
+            <div class="basic">
+                <ul class="basic-attr">
+                    <li
+                        class="basic-attr-item"
+                        v-for="item in filterAttrs"
+                        :key="item.attr"
+                        :class="{ selected: item.value === currentAttr.value }"
+                        @click="select(item)"
+                    >
+                        {{ item.attr }}
+                    </li>
+                </ul>
+                <div class="img" >
+                    <img style="width: 100%;height: 100%;" :style="filterStyle" src="../assets/images/1.jpg" alt="滤镜 demo 图" >
+                </div>
+            </div>
+            <!-- <div class="blur-wrap">
+                <div class="blur">毛玻璃效果</div>
+            </div> -->
+        </section>
+        <section v-show="currentTab === 1">
+            <h2>全站灰度调整</h2>
+            <button @click="toggleGray">灰度切换</button>
+        </section>
+        <section v-show="currentTab === 2">
+            <h2>卡片模糊</h2>
+            <ul class="cards">
+                <li class="card">One</li>
+                <li class="card">Two</li>
+                <li class="card">Three</li>
+            </ul>
+        </section>
+        <section v-show="currentTab === 3">
+            <h2>融合效果</h2>
+            <div class="container">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+            </div>
+        </section>
+        <section v-show="currentTab === 4">
+            <h2>加载动画</h2>
+            <div class="loading">
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+                <div class="item"></div>
+            </div>
+        </section>
+        <section v-show="currentTab === 5">
+            <h2>酷炫的文字</h2>
+            <div class="text-container">
+                <span class="text">酷炫的文字出场</span>
+            </div>
+        </section>
     </section>
 </template>
 
@@ -47,6 +69,32 @@ import svg from '../assets/images/filter.svg';
 
 export default {
     setup() {
+        const tabs = shallowRef([
+            {
+                name: '基础用法',
+                value: 0,
+            },
+            {
+                name: '示例一',
+                value: 1,
+            },
+            {
+                name: '示例二',
+                value: 2,
+            },
+            {
+                name: '示例三',
+                value: 3,
+            },
+            {
+                name: '示例四',
+                value: 4,
+            },
+            {
+                name: '示例五',
+                value: 5,
+            },
+        ])
         const filterAttrs = shallowRef([
             /* svg */
             { attr: "filter: url('../assets/images/filter.svg#svgBlur')", value: `url(${svg}#svgBlur)` },
@@ -72,39 +120,64 @@ export default {
             { attr: "filter: sepia(60%)", value: "sepia(60%)" },
         ]);
 
-        const currentAttr = ref(filterAttrs.value[0]);
-
         const filterStyle = computed(() => {
             return {
                 filter: currentAttr.value.value,
             };
         });
 
+        const currentAttr = ref(filterAttrs.value[0]);
         const select = (item) => {
             currentAttr.value = item;
         };
 
+        const isGray = shallowRef(false);
+        const toggleGray = () => {
+            isGray.value = !isGray.value;
+        };
+
+        const currentTab = shallowRef(tabs.value[0].value);
+        const changeTab = (tab) => {
+            currentTab.value = tab.value;
+        };
+
         return {
+            tabs,
             filterAttrs,
             currentAttr,
             filterStyle,
+            isGray,
+            currentTab,
 
             select,
+            toggleGray,
+            changeTab,
         };
     },
 }
 </script>
 
 <style>
-.basic {
-    display: flex;
-    justify-content: center;
-}
-.basic ul,
-.basic li {
+.filter ul,
+.filter li {
     margin: 0;
     padding: 0;
     list-style: none;
+}
+.tabs {
+    display: flex;
+    justify-content: center;
+}
+.tabs .tab {
+    padding: 0 12px;
+    cursor: pointer;
+}
+.selected {
+    color: #2254f4;
+}
+.basic {
+    display: flex;
+    justify-content: center;
 }
 .basic-attr-item {
     width: 400px;
@@ -118,6 +191,37 @@ export default {
     width: 400px;
     height: 242px;
 }
+.blur-wrap {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    height: 242px;
+    background: url('../assets/images/3.jpg') 0 / contain fixed;
+}
+.blur-wrap .blur {
+    position: relative;
+    padding: 20px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    /* overflow: hidden; */
+}
+.blur-wrap .blur::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    filter: blur(20px);
+    /* background-color: rgba(255, 0, 0, .8);
+    margin: -30px; */
+}
+/* 全站灰度 */
+.gray {
+    filter: grayscale(100%);
+}
 /* 卡片模糊 */
 .cards,
 .card {
@@ -128,7 +232,7 @@ export default {
     display: flex;
     justify-content: center;
 }
-.card {
+.cards .card {
     position: relative;
     width: 200px;
     height: 100px;
