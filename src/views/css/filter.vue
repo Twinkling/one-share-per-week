@@ -67,6 +67,9 @@
 import { shallowRef, ref, computed, defineComponent } from 'vue';
 import svg from '../../assets/images/filter.svg';
 
+type TTab = { name: string; value: number };
+type TFilterAttr = { attr: string; value: string };
+
 export default defineComponent({
     setup() {
         const tabs = shallowRef([
@@ -94,7 +97,7 @@ export default defineComponent({
                 name: '示例五',
                 value: 5,
             },
-        ])
+        ] as TTab[])
         const filterAttrs = shallowRef([
             /* svg */
             { attr: "filter: url('../../assets/images/filter.svg#svgBlur')", value: `url(${svg}#svgBlur)` },
@@ -118,7 +121,7 @@ export default defineComponent({
             { attr: "filter: saturate(30%)", value: "saturate(30%)" },
             /* 转为深褐色 0~100%, 0 无变化 */
             { attr: "filter: sepia(60%)", value: "sepia(60%)" },
-        ]);
+        ] as TFilterAttr[]);
 
         const filterStyle = computed(() => {
             return {
@@ -127,7 +130,7 @@ export default defineComponent({
         });
 
         const currentAttr = ref(filterAttrs.value[0]);
-        const select = (item) => {
+        const select = (item: TFilterAttr) => {
             currentAttr.value = item;
         };
 
@@ -137,7 +140,7 @@ export default defineComponent({
         };
 
         const currentTab = shallowRef(tabs.value[0].value);
-        const changeTab = (tab) => {
+        const changeTab = (tab: TTab) => {
             currentTab.value = tab.value;
         };
 
