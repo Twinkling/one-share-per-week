@@ -46,7 +46,7 @@ import getBorderOfGrid from './get-border-of-grid';
 ]
 
  */
-export default function reLayoutGridByGapBorder(grid, gap, border) {
+export default function reLayoutGridByGapBorder(grid: Record<string, number>[], gap: number, border: number) {
     // 边框处理思路：
 
     // - 算出预期的border与当前的diff：  borderDiff
@@ -78,8 +78,8 @@ export default function reLayoutGridByGapBorder(grid, gap, border) {
 
     if(borderDiff === 0 && gapDiff === 0) return grid;
 
-    const tops = {};
-    const lefts = {};
+    const tops: Record<string, number> = {};
+    const lefts: Record<string, number> = {};
     const gridEdge = {
         top: Infinity,
         bottom: -Infinity,
@@ -129,7 +129,7 @@ export default function reLayoutGridByGapBorder(grid, gap, border) {
  * @param {number} currentGap
  * @param {number} edge - 横向为右边缘，纵向为底部
  */
-function adjustCells(grid, direction, positions, gap, gapDiff, borderDiff, currentGap, edge) {
+function adjustCells(grid: Record<string, number>[], direction: string, positions: Record<string, number>, gap: number, gapDiff: number, borderDiff: number, currentGap: number, edge: number) {
     let posField = 'top'; // 当前方向的对齐项
     let sumField = 'width'; // 当前方向计算总宽/高项
     let otherPosField = 'left';
@@ -166,7 +166,7 @@ function adjustCells(grid, direction, positions, gap, gapDiff, borderDiff, curre
                     leftsOrTops[acc[otherPosField]] = 1;
                     return leftsOrTops;
                 }, {});
-                const maxBottomOrRight = relativeCells.map(x => x[posField] + x[otherSumField]).sort((a, b) => a - b).pop();
+                const maxBottomOrRight: number = relativeCells.map(x => x[posField] + x[otherSumField]).sort((a, b) => a - b).pop()!;
                 let widthOrHeightSum = relativeCells.reduce((sum, c) => sum + c[sumField], 0) +
                     (relativeCells.length - 1) * currentGap;
                 // 将在top/left 和 maxBottomOrRight 中间的格子计入，但是每个left/top只能有一个
@@ -176,6 +176,7 @@ function adjustCells(grid, direction, positions, gap, gapDiff, borderDiff, curre
                         widthOrHeightSum = widthOrHeightSum + cell[sumField] + currentGap;
                         // 由于小数问题，bottom/right不做严格对等
                         if(
+                            // @ts-ignore
                             cell[posField] > top && bottomOrRight - maxBottomOrRight < 1 &&
                     !leftsOrTopsOfContainedCell[cell[otherPosField]] && widthOrHeightSum - 1 < edge
                         ) {

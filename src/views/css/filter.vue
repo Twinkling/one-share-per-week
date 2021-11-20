@@ -18,7 +18,7 @@
                     </li>
                 </ul>
                 <div class="img" >
-                    <img style="width: 100%;height: 100%;" :style="filterStyle" src="../assets/images/1.jpg" alt="滤镜 demo 图" >
+                    <img style="width: 100%;height: 100%;" :style="filterStyle" src="../../assets/images/1.jpg" alt="滤镜 demo 图" >
                 </div>
             </div>
             <!-- <div class="blur-wrap">
@@ -63,11 +63,11 @@
     </section>
 </template>
 
-<script>
-import { shallowRef, ref, computed } from 'vue';
-import svg from '../assets/images/filter.svg';
+<script lang="ts">
+import { shallowRef, ref, computed, defineComponent } from 'vue';
+import svg from '../../assets/images/filter.svg';
 
-export default {
+export default defineComponent({
     setup() {
         const tabs = shallowRef([
             {
@@ -97,7 +97,7 @@ export default {
         ])
         const filterAttrs = shallowRef([
             /* svg */
-            { attr: "filter: url('../assets/images/filter.svg#svgBlur')", value: `url(${svg}#svgBlur)` },
+            { attr: "filter: url('../../assets/images/filter.svg#svgBlur')", value: `url(${svg}#svgBlur)` },
             /* 高斯模糊, 不接受百分比数值 */
             { attr: "filter: blur(5px)", value: "blur(5px)" },
             /* 亮/明度 0~100%, 100% 无变化, 可超过 100% */
@@ -154,10 +154,10 @@ export default {
             changeTab,
         };
     },
-}
+})
 </script>
 
-<style>
+<style scoped>
 .filter ul,
 .filter li {
     margin: 0;
@@ -198,7 +198,7 @@ export default {
     align-items: center;
     width: 400px;
     height: 242px;
-    background: url('../assets/images/3.jpg') 0 / contain fixed;
+    background: url('../../assets/images/3.jpg') 0 / contain fixed;
 }
 .blur-wrap .blur {
     position: relative;
@@ -256,16 +256,16 @@ export default {
     border-radius: 20px;
     filter: blur(0px) opacity(1);
     transition: filter 200ms linear, transform 200ms linear;
-    background: url('../assets/images/1.jpg') no-repeat center center;
+    background: url('../../assets/images/1.jpg') no-repeat center center;
     background-size: 200px 100px;
 }
 
 .card:nth-child(2)::before {
-    background-image: url('../assets/images/2.jpg');
+    background-image: url('../../assets/images/2.jpg');
 }
 
 .card:nth-child(3)::before {
-    background-image: url('../assets/images/3.jpg');
+    background-image: url('../../assets/images/3.jpg');
 }
 
 .cards:hover > .card:not(:hover):before{    

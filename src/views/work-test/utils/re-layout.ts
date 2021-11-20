@@ -1,4 +1,4 @@
-export default function reLayout(grid, gapDiff, edge) {
+export default function reLayout(grid: any[], gapDiff: number, edge: any) {
   const newGrid = grid
     .map((cell) => ({ ...cell }))
     .sort(
