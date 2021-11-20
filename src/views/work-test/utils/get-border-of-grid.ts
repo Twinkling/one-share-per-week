@@ -5,7 +5,7 @@
  * @param {[]Cell} grid - grid
  * @returns {Number} border value
  */
-export default function getBorderOfGrid(grid) {
+export default function getBorderOfGrid(grid: any[]) {
     let currentBorder = 9999;
 
     grid.forEach(cell => {

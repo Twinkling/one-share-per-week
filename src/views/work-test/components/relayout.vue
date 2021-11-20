@@ -10,12 +10,12 @@
 </template>
 
 <script lang="ts">
-import { ref, toRefs, watch, computed, reactive } from "vue";
+import { ref, toRefs, watch, computed, reactive, defineComponent } from "vue";
 import reLayoutGridByGapBorder from "../utils/re-layout-grid-by-gap-border";
 import reLayout from "../utils/re-layout";
-import { data } from "../utils/data";
+import { data } from "../data";
 
-export default {
+export default defineComponent({
   props: {
     gap: Number,
   },
@@ -39,7 +39,7 @@ export default {
     //   });
     // });
 
-    const model = [
+    const model: Record<string, number>[] = [
       {
         top: 0,
         left: 0,
@@ -81,7 +81,7 @@ export default {
       //   };
       //   return l;
       // });
-      const newList = reLayoutGridByGapBorder(list.value, newValue, 0);
+      const newList = reLayoutGridByGapBorder(list.value, newValue!, 0);
       // const newList = reLayout(grid, newValue - oldValue, {top: 0, right: 1920, bottom: 1080, left: 0});
       list.value = newList;
     });
@@ -94,7 +94,7 @@ export default {
     //     height: `${$height}px`,
     //   };
     // };
-    const getStyle = ({top, left, width, height }) => {
+    const getStyle = ({ top, left, width, height }: any) => {
       return {
         top: `${top}px`,
         left: `${left}px`,
@@ -108,7 +108,7 @@ export default {
       getStyle,
     };
   },
-};
+});
 </script>
 
 <style scoped>

@@ -5,7 +5,7 @@
  *
  * @return {number} - gap
  */
-export default function getGapOfGrid(grid) {
+export default function getGapOfGrid(grid: any[]) {
     if(grid.length === 0) {
         return 0;
     }
