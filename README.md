@@ -1,4 +1,4 @@
-# one-tool-per-week
+# one-share-per-week
 
 - [ ] 二维码生成及识别
 - [ ] 四象限时间管理
