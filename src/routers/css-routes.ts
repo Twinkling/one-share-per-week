@@ -13,6 +13,11 @@ const cssRoutes = [
         path: "filter",
         component: () => import("../views/css/filter.vue"),
       },
+      {
+        name: 'Practice',
+        path: 'practice',
+        component: () => import('../views/practice/index.vue'),
+      }
     ],
   },
 ] as RouteRecordRaw[];
