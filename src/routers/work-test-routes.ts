@@ -11,8 +11,13 @@ const workTestRoutes = [
       {
         name: "Layout",
         path: "layout",
-        component: () => import("../views/work-test/layout.vue"),
+        component: () => import("../views/work-test/layout/index.vue"),
       },
+      {
+        name: 'FFmpeg',
+        path: 'ffmpeg',
+        component: () => import("../views/work-test/ffmpeg/index.vue"),
+      }
     ],
   },
 ] as RouteRecordRaw[];
