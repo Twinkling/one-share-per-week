@@ -17,6 +17,11 @@ const workTestRoutes = [
         name: 'FFmpeg',
         path: 'ffmpeg',
         component: () => import("../views/work-test/ffmpeg/index.vue"),
+      },
+      {
+        name: 'JavaScriptCSV',
+        path: 'javascript-csv',
+        component: () => import("../views/work-test/javascript-csv/index.vue"),
       }
     ],
   },
