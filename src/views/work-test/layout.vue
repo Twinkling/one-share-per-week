@@ -14,11 +14,8 @@ import Relayout from './components/relayout.vue';
 const gap = ref(12);
 
 const changeGap = (newGap: number) => {
-  gap.value = newGap;
-}
+    gap.value = newGap;
+};
 </script>
 
-<style scoped>
-.app {
-}
-</style>
+<style scoped></style>
