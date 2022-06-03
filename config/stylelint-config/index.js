@@ -1,5 +1,9 @@
 module.exports = {
-    extends: ['stylelint-config-standard', 'stylelint-config-recess-order', 'stylelint-config-prettier'],
+    extends: [
+        'stylelint-config-standard',
+        'stylelint-config-recess-order',
+        'stylelint-config-prettier',
+    ],
     plugins: ['stylelint-order'],
     overrides: [
         {
@@ -7,7 +11,7 @@ module.exports = {
             customSyntax: 'postcss-less',
         },
         {
-            files: ['**/*.(scss)'],
+            files: ['**/*.(scss|vue)'],
             customSyntax: 'postcss-scss',
         },
         {
@@ -51,7 +55,14 @@ module.exports = {
         'selector-pseudo-class-no-unknown': [
             true,
             {
-                ignorePseudoClasses: ['global', 'deep', 'local', 'export', 'v-deep', 'v-global'],
+                ignorePseudoClasses: [
+                    'global',
+                    'deep',
+                    'local',
+                    'export',
+                    'v-deep',
+                    'v-global',
+                ],
             },
         ],
         'selector-pseudo-element-no-unknown': [
@@ -78,6 +89,8 @@ module.exports = {
             ],
             { severity: 'warning' },
         ],
+        'number-max-precision': 15,
+        // https://github.com/stylelint-scss/stylelint-scss/issues/86
         'at-rule-no-unknown': [
             true,
             {
@@ -94,9 +107,29 @@ module.exports = {
                     'mixin',
                     'extend',
                     'import',
+
+                    'debug',
+                    'warn',
+                    'error',
+                    'else',
+                    'for',
+                    'while',
+                    'return',
                 ],
             },
         ],
+        'function-no-unknown': [
+            true,
+            { ignoreFunctions: ['pi', 'unit', 'rad', 'fact'] },
+        ],
     },
-    ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts', '**/*.mjs', '**/*.json', '**/*.md'],
+    ignoreFiles: [
+        '**/*.js',
+        '**/*.jsx',
+        '**/*.tsx',
+        '**/*.ts',
+        '**/*.mjs',
+        '**/*.json',
+        '**/*.md',
+    ],
 };

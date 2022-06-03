@@ -9,7 +9,7 @@ module.exports = {
      * 超过100个字符换行
      * @default 80
      */
-    printWidth: 120,
+    printWidth: 80,
 
     /**
      * 使用单引号代替双引号
