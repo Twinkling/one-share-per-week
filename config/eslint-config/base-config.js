@@ -13,11 +13,9 @@ module.exports = {
     extends: [
         'eslint:recommended',
         'standard',
-        // require.resolve('./rules/gaoding'),
         require.resolve('./rules/basic'),
         require.resolve('./rules/imports'),
         require.resolve('./rules/node'),
-        // require.resolve("./jest"),
     ],
     parser: '@babel/eslint-parser',
     parserOptions: {

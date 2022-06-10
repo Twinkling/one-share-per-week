@@ -8,22 +8,6 @@ module.exports = {
     },
     rules: {
         /**
-         * 【强制】导入文件使用扩展名
-         */
-        // 'import/extensions': [
-        //     'error',
-        //     'ignorePackages',
-        //     {
-        //         js: 'never',
-        //         jsx: 'never',
-        //         ts: 'never',
-        //         tsx: 'never',
-        //         mjs: 'never',
-        //         'd.ts': 'never',
-        //     },
-        // ],
-
-        /**
          * 【推荐】在最后一个 import / require 语句后保留一个空行
          */
         'import/newline-after-import': 'warn',
