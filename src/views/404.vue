@@ -10,9 +10,8 @@ export default defineComponent({
     components: {},
     data() {
         return {};
-    }
-})
+    },
+});
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

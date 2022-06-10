@@ -8,7 +8,7 @@
 export default function getBorderOfGrid(grid: any[]) {
     let currentBorder = 9999;
 
-    grid.forEach(cell => {
+    grid.forEach((cell) => {
         currentBorder = Math.min(currentBorder, cell.top);
     });
 

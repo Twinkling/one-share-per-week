@@ -46,7 +46,11 @@ import getBorderOfGrid from './get-border-of-grid';
 ]
 
  */
-export default function reLayoutGridByGapBorder(grid: Record<string, number>[], gap: number, border: number) {
+export default function reLayoutGridByGapBorder(
+    grid: Record<string, number>[],
+    gap: number,
+    border: number,
+) {
     // 边框处理思路：
 
     // - 算出预期的border与当前的diff：  borderDiff
@@ -66,9 +70,9 @@ export default function reLayoutGridByGapBorder(grid: Record<string, number>[], 
     //      * 含有未处理过与处理过的，逐个根据前后关系处理
     //      * 全部处理过，进行检查矫正
 
-    if(typeof gap !== 'number' || typeof border !== 'number') return grid;
+    if (typeof gap !== 'number' || typeof border !== 'number') return grid;
 
-    const newGrid = grid.map(cell => ({ ...cell }));
+    const newGrid = grid.map((cell) => ({ ...cell }));
 
     const currentBorder = getBorderOfGrid(newGrid);
     const borderDiff = border - currentBorder;
@@ -76,7 +80,7 @@ export default function reLayoutGridByGapBorder(grid: Record<string, number>[], 
     const currentGap = getGapOfGrid(newGrid);
     const gapDiff = gap - currentGap;
 
-    if(borderDiff === 0 && gapDiff === 0) return grid;
+    if (borderDiff === 0 && gapDiff === 0) return grid;
 
     const tops: Record<string, number> = {};
     const lefts: Record<string, number> = {};
@@ -87,7 +91,7 @@ export default function reLayoutGridByGapBorder(grid: Record<string, number>[], 
         right: -Infinity,
     };
 
-    newGrid.forEach(cell => {
+    newGrid.forEach((cell) => {
         const bottom = cell.top + cell.height;
         const right = cell.left + cell.width;
         gridEdge.top = Math.min(cell.top, gridEdge.top);
@@ -104,12 +108,30 @@ export default function reLayoutGridByGapBorder(grid: Record<string, number>[], 
     });
 
     // 横向宽度调整
-    adjustCells(newGrid, 'horizontal', tops, gap, gapDiff, borderDiff, currentGap, gridEdge.right);
+    adjustCells(
+        newGrid,
+        'horizontal',
+        tops,
+        gap,
+        gapDiff,
+        borderDiff,
+        currentGap,
+        gridEdge.right,
+    );
 
     // 纵向高度调整
-    adjustCells(newGrid, 'vertical', lefts, gap, gapDiff, borderDiff, currentGap, gridEdge.bottom);
+    adjustCells(
+        newGrid,
+        'vertical',
+        lefts,
+        gap,
+        gapDiff,
+        borderDiff,
+        currentGap,
+        gridEdge.bottom,
+    );
 
-    return newGrid.map(cell => ({
+    return newGrid.map((cell) => ({
         left: cell._left || cell.left,
         top: cell._top || cell.top,
         width: Number.isNaN(cell._width) ? 1 : cell._width,
@@ -129,14 +151,23 @@ export default function reLayoutGridByGapBorder(grid: Record<string, number>[], 
  * @param {number} currentGap
  * @param {number} edge - 横向为右边缘，纵向为底部
  */
-function adjustCells(grid: Record<string, number>[], direction: string, positions: Record<string, number>, gap: number, gapDiff: number, borderDiff: number, currentGap: number, edge: number) {
+function adjustCells(
+    grid: Record<string, number>[],
+    direction: string,
+    positions: Record<string, number>,
+    gap: number,
+    gapDiff: number,
+    borderDiff: number,
+    currentGap: number,
+    edge: number,
+) {
     let posField = 'top'; // 当前方向的对齐项
     let sumField = 'width'; // 当前方向计算总宽/高项
     let otherPosField = 'left';
     let otherSumField = 'height';
     let newOtherPosField = '_left';
     let newSumField = '_width';
-    if(direction === 'vertical') {
+    if (direction === 'vertical') {
         posField = 'left';
         sumField = 'height';
         otherPosField = 'top';
@@ -146,48 +177,62 @@ function adjustCells(grid: Record<string, number>[], direction: string, position
     }
     // 不对 grid 直接排序
     const gridSortByPostField = grid
-        .map(cell => ({ sortField: cell[posField], cell }))
+        .map((cell) => ({ sortField: cell[posField], cell }))
         .sort((c1, c2) => c1.sortField - c2.sortField);
 
     Object.keys(positions)
-        .map(t => parseFloat(t))
+        .map((t) => parseFloat(t))
         .sort((t1, t2) => t1 - t2)
-        .forEach(pos => {
+        .forEach((pos) => {
             // 宽/高度调整
             // 所有 top/left 相同和 top/left 在 cell 的中间的 cells 均会影响宽度/高度分布
             // 由于小数问题，top/left对比没有做严格对等
-            const relativeCells = grid.filter(c =>
-                (c[posField] < pos && c[posField] + c[otherSumField] - pos >= 1) ||
-            Math.abs(c[posField] - pos) < 1
-            )
+            const relativeCells = grid
+                .filter(
+                    (c) =>
+                        (c[posField] < pos &&
+                            c[posField] + c[otherSumField] - pos >= 1) ||
+                        Math.abs(c[posField] - pos) < 1,
+                )
                 .sort((c1, c2) => c1[otherPosField] - c2[otherPosField]);
-            if(relativeCells.length > 0) {
-                const leftsOrTopsOfContainedCell = relativeCells.reduce((leftsOrTops, acc) => {
-                    leftsOrTops[acc[otherPosField]] = 1;
-                    return leftsOrTops;
-                }, {});
-                const maxBottomOrRight: number = relativeCells.map(x => x[posField] + x[otherSumField]).sort((a, b) => a - b).pop()!;
-                let widthOrHeightSum = relativeCells.reduce((sum, c) => sum + c[sumField], 0) +
+            if (relativeCells.length > 0) {
+                const leftsOrTopsOfContainedCell = relativeCells.reduce(
+                    (leftsOrTops, acc) => {
+                        leftsOrTops[acc[otherPosField]] = 1;
+                        return leftsOrTops;
+                    },
+                    {},
+                );
+                const maxBottomOrRight: number = relativeCells
+                    .map((x) => x[posField] + x[otherSumField])
+                    .sort((a, b) => a - b)
+                    .pop()!;
+                let widthOrHeightSum =
+                    relativeCells.reduce((sum, c) => sum + c[sumField], 0) +
                     (relativeCells.length - 1) * currentGap;
                 // 将在top/left 和 maxBottomOrRight 中间的格子计入，但是每个left/top只能有一个
-                gridSortByPostField
-                    .forEach(({ cell }) => {
-                        const bottomOrRight = cell[posField] + cell[otherSumField];
-                        widthOrHeightSum = widthOrHeightSum + cell[sumField] + currentGap;
-                        // 由于小数问题，bottom/right不做严格对等
-                        if(
-                            // @ts-ignore
-                            cell[posField] > top && bottomOrRight - maxBottomOrRight < 1 &&
-                    !leftsOrTopsOfContainedCell[cell[otherPosField]] && widthOrHeightSum - 1 < edge
-                        ) {
-                            leftsOrTopsOfContainedCell[cell[otherPosField]] = 1;
-                            relativeCells.push(cell);
-                        }
-                        else {
-                            widthOrHeightSum = widthOrHeightSum - cell[sumField] - currentGap;
-                        }
-                    });
-                relativeCells.sort((c1, c2) => c1[otherPosField] - c2[otherPosField]);
+                gridSortByPostField.forEach(({ cell }) => {
+                    const bottomOrRight = cell[posField] + cell[otherSumField];
+                    widthOrHeightSum =
+                        widthOrHeightSum + cell[sumField] + currentGap;
+                    // 由于小数问题，bottom/right不做严格对等
+                    if (
+                        // @ts-ignore ignore
+                        cell[posField] > top &&
+                        bottomOrRight - maxBottomOrRight < 1 &&
+                        !leftsOrTopsOfContainedCell[cell[otherPosField]] &&
+                        widthOrHeightSum - 1 < edge
+                    ) {
+                        leftsOrTopsOfContainedCell[cell[otherPosField]] = 1;
+                        relativeCells.push(cell);
+                    } else {
+                        widthOrHeightSum =
+                            widthOrHeightSum - cell[sumField] - currentGap;
+                    }
+                });
+                relativeCells.sort(
+                    (c1, c2) => c1[otherPosField] - c2[otherPosField],
+                );
             }
 
             const sumOfGrid = relativeCells.reduce((s, c) => {
@@ -195,42 +240,49 @@ function adjustCells(grid: Record<string, number>[], direction: string, position
                 return s;
             }, 0);
 
-            const unCalculatedCells = relativeCells.filter(cell => typeof cell[newSumField] !== 'number');
-            if(unCalculatedCells.length === relativeCells.length) {
-                const diff = borderDiff * 2 + (relativeCells.length - 1) * gapDiff;
+            const unCalculatedCells = relativeCells.filter(
+                (cell) => typeof cell[newSumField] !== 'number',
+            );
+            if (unCalculatedCells.length === relativeCells.length) {
+                const diff =
+                    borderDiff * 2 + (relativeCells.length - 1) * gapDiff;
                 const ratio = (sumOfGrid - diff) / sumOfGrid;
                 relativeCells.forEach((cell, index) => {
                     const width = cell[sumField];
                     cell[newSumField] = width * ratio;
-                    if(index !== 0) {
+                    if (index !== 0) {
                         // 最上侧的 cells 的 left/top 已经在整体移动步骤处理正确
                         const prevCell = relativeCells[index - 1];
-                        const leftOrTop = prevCell[newOtherPosField] || prevCell[otherPosField];
-                        const widthOfHeight = prevCell[newSumField] || prevCell[sumField];
+                        const leftOrTop =
+                            prevCell[newOtherPosField] ||
+                            prevCell[otherPosField];
+                        const widthOfHeight =
+                            prevCell[newSumField] || prevCell[sumField];
                         // 重新计算 left/top
-                        cell[newOtherPosField] = leftOrTop + widthOfHeight + gap;
+                        cell[newOtherPosField] =
+                            leftOrTop + widthOfHeight + gap;
                     }
 
                     // 查找 left/top 和 width/height 相同的未处理的cell, 保证一致
                     // TODO: 优化，在循环外部处理
-                    grid.forEach(c => {
-                        if(
-                            Math.abs(c[otherPosField] - cell[otherPosField]) < 1 &&
-                        Math.abs(c[sumField] - cell[sumField]) < 1 &&
-                        !c[newSumField]
+                    grid.forEach((c) => {
+                        if (
+                            Math.abs(c[otherPosField] - cell[otherPosField]) <
+                                1 &&
+                            Math.abs(c[sumField] - cell[sumField]) < 1 &&
+                            !c[newSumField]
                         ) {
                             c[newOtherPosField] = cell[newOtherPosField];
                             c[newSumField] = cell[newSumField];
                         }
                     });
                 });
-            }
-            else if(unCalculatedCells.length > 0) {
+            } else if (unCalculatedCells.length > 0) {
                 // 已经含有处理过的单元格，逐个处理为处理过的单元格
                 // 因为这时候剩余 diff 的不好准确计算的
-                for(let i = 0; i < relativeCells.length; i++) {
+                for (let i = 0; i < relativeCells.length; i++) {
                     const current = relativeCells[i];
-                    if(current[newSumField]) continue;
+                    if (current[newSumField]) continue;
 
                     const prev = relativeCells[i - 1] || {
                         _left: 0,
@@ -245,13 +297,16 @@ function adjustCells(grid: Record<string, number>[], direction: string, position
                         _height: 0,
                     };
 
-                    current[newOtherPosField] = prev[newOtherPosField] + prev[newSumField] + gap;
-                    if(typeof next[newSumField] !== 'undefined') {
-                        current[newSumField] = next[newOtherPosField] - current[newOtherPosField] - gap;
-                    }
-                    else {
+                    current[newOtherPosField] =
+                        prev[newOtherPosField] + prev[newSumField] + gap;
+                    if (typeof next[newSumField] !== 'undefined') {
+                        current[newSumField] =
+                            next[newOtherPosField] -
+                            current[newOtherPosField] -
+                            gap;
+                    } else {
                         let diff = gapDiff;
-                        if(i === 0 || i === relativeCells.length - 1) {
+                        if (i === 0 || i === relativeCells.length - 1) {
                             diff = gapDiff / 2;
                         }
                         current[newSumField] = current[sumField] - diff;
@@ -259,38 +314,43 @@ function adjustCells(grid: Record<string, number>[], direction: string, position
 
                     // 查找 left/top 和 width/height 相同的未处理的cell, 保证一致
                     // TODO: 优化，在循环外部处理
-                    grid.forEach(c => {
-                        if(
-                            Math.abs(c[otherPosField] - current[otherPosField]) < 1 &&
-                        Math.abs(c[sumField] - current[sumField]) < 1 &&
-                        !c[newSumField]
+                    grid.forEach((c) => {
+                        if (
+                            Math.abs(
+                                c[otherPosField] - current[otherPosField],
+                            ) < 1 &&
+                            Math.abs(c[sumField] - current[sumField]) < 1 &&
+                            !c[newSumField]
                         ) {
                             c[newOtherPosField] = current[newOtherPosField];
                             c[newSumField] = current[newSumField];
                         }
                     });
                 }
-            }
-            else {
-            // 由于上两个部分会将 height, top 一致的格子均统一设置
-            // 以尽可能的保持单元格原始的布局
-            // 但可能和其他关联单元格的结果有出入，出现过多空隙或重叠，因此做一次检查矫正
-            // 如下：0, 1, 2 处理后处理 3, 4, 5, 2，最后处理 3, 6, 7 发现
-            // 都已经统一规则处理过了，但是无法保证是正确的
-            //   +--+---------+------------+
-            //   | 0|   1     |      2     |
-            //   |--|---------+            |
-            //   | 3|  4 | 5  |            |
-            //   |  |----------------------|
-            //   |  |    6    |  7         |
-            //   |  |         |            |
-            //   +--+----------------------+
+            } else {
+                // 由于上两个部分会将 height, top 一致的格子均统一设置
+                // 以尽可能的保持单元格原始的布局
+                // 但可能和其他关联单元格的结果有出入，出现过多空隙或重叠，因此做一次检查矫正
+                // 如下：0, 1, 2 处理后处理 3, 4, 5, 2，最后处理 3, 6, 7 发现
+                // 都已经统一规则处理过了，但是无法保证是正确的
+                //   +--+---------+------------+
+                //   | 0|   1     |      2     |
+                //   |--|---------+            |
+                //   | 3|  4 | 5  |            |
+                //   |  |----------------------|
+                //   |  |    6    |  7         |
+                //   |  |         |            |
+                //   +--+----------------------+
 
-                for(let i = 0; i < relativeCells.length - 1; i++) {
+                for (let i = 0; i < relativeCells.length - 1; i++) {
                     const current = relativeCells[i];
                     const next = relativeCells[i + 1];
-                    const diff = next[newOtherPosField] - current[newOtherPosField] - current[newSumField] - gap;
-                    if(Math.abs(diff) > 1) {
+                    const diff =
+                        next[newOtherPosField] -
+                        current[newOtherPosField] -
+                        current[newSumField] -
+                        gap;
+                    if (Math.abs(diff) > 1) {
                         current[newSumField] += diff;
                     }
                 }
